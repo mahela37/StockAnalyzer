@@ -1,0 +1,26 @@
+marketOpen:   # in UTC , 24H format
+  hour: 13
+  minute: 30
+
+indicators:
+  sma:
+    params:
+      timeperiod: 3
+
+  rsi:
+    params:
+      timeperiod: 4
+
+  macd:
+    params:
+      fastperiod: 20
+      slowperiod: 30
+      signalperiod: 10
+
+api:
+  finhub:
+    tokens:
+      - 'sandbox_c1jmti748v6pv69gpa0g'
+      - 'sandbox_c1ke35237fkpcj5af93g'
+    max_poll_rate: 10
+
