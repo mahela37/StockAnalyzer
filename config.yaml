@@ -1,3 +1,5 @@
+# Main configuration file where we can configure the application-wide settings. 
+
 marketOpen:   # in UTC , 24H format
   hour: 13
   minute: 30
