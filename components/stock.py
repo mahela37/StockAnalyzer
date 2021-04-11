@@ -6,15 +6,13 @@ import threading
 ''' Class for an individual stock '''
 class Stock:
     config = config.config
-    ticker = ""
-    query_source = None
-    price = []
-    indicators = {}
-
 
     def __init__(self, ticker, query_source):
-        self.ticker = ticker
+        self.ticker = ticker.strip()
         self.query_source = query_source
+        self.price=[]
+        self.indicators={}
+        self.has_data = False
         for indicator in self.config['indicators']:
             self.indicators[indicator] = []
 
@@ -22,7 +20,8 @@ class Stock:
     def refresh(self):
         price_result=self.query_source.get_price(self.ticker)
         if price_result is not None:
-            self.price.append()
+            self.price.append(price_result)
+            self.has_data=True
 
         for indicator in self.indicators:
             if self.indicators[indicator] == []:  # Data not initialized. fetch all data since market open
@@ -37,16 +36,17 @@ class Stock:
             if data is not None:
                 for entry in data:
                     self.indicators[indicator].append(entry)
+                self.has_data=True
 
 
 ''' Class that holds multiple Stock objects '''
 class Stocks:
-    tickers = {}
     config=None
     max_concurrent_threads=0
 
     def __init__(self, stock_list, query_source):
         self.config=config.config
+        self.tickers = {}
 
         for item in stock_list:
             self.tickers[item.strip()] = Stock(item, query_source)
@@ -62,7 +62,6 @@ class Stocks:
         stock.refresh()
 
     def refresh(self): # Method used to refresh all stocks.
-
         # Start up the max amount of concurrent threads. whenever a thread is finished, start another one
         current_threads=[]
         for stock in self.tickers:

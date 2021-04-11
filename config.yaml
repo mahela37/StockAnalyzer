@@ -24,5 +24,8 @@ api:
     tokens:
       - 'sandbox_c1jmti748v6pv69gpa0g'
       - 'sandbox_c1ke35237fkpcj5af93g'
-    max_poll_rate: 10
+    max_poll_rate: 10 # Max requests/sec
 
+main:
+  poll_rate: 5 # Sleep time before polling again
+  analyze_rate: 5  # Sleep time before analyzing again
