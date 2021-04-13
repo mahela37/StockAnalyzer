@@ -26,16 +26,16 @@ class Api():
         self.token=self.tokens[self.index]
         self.index = self.index + 1
 
-
-    def get_price(self, ticker):    # Current price endpoint
-        self.rotate_token()
-        r = requests.get(f'https://finnhub.io/api/v1/quote?symbol={ticker}&token={self.token}')
-        if (r.status_code != 200):  # Non-ok response
-            return None
-        result = r.json()
-        if "p" not in result or "t" not in result:  # Empty or incomplete response
-            return None
-        return {'timestamp': result['t'], 'value': result['p']}
+    # Too expensive of a query, and volume will be another query. For now, use yahoo's API for this part.
+    # def get_price(self, ticker):    # Current price endpoint
+    #     self.rotate_token()
+    #     r = requests.get(f'https://finnhub.io/api/v1/quote?symbol={ticker}&token={self.token}')
+    #     if (r.status_code != 200):  # Non-ok response
+    #         return None
+    #     result = r.json()
+    #     if "p" not in result or "t" not in result:  # Empty or incomplete response
+    #         return None
+    #     return {'timestamp': result['t'], 'value': result['p']}
 
 
     def get_indicator(self, ticker, indicator, start, end, params=[]):  # Indicator endpoint, works with any indicator and optional parameters
@@ -46,7 +46,10 @@ class Api():
             base_string = base_string + f'&{key}={params[key]}'
 
         r = requests.get(base_string)
-        data = r.json()
+        try:
+            data = r.json()
+        except:
+            return None
 
         if (r.status_code != 200):
             return None

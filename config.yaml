@@ -26,6 +26,10 @@ api:
       - 'sandbox_c1ke35237fkpcj5af93g'
     max_poll_rate: 10 # Max requests/sec
 
+  yahoo:
+
+
 main:
   poll_rate: 5 # Sleep time before polling again
   analyze_rate: 5  # Sleep time before analyzing again
+  simulate: true  # Run in simulation mode

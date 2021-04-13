@@ -1,14 +1,15 @@
-import os,time,threading
-
-############ Here we can choose whether to use real data or use the simulated data ########
-# from providers.finhub import Api
-from providers.simulator import Api
-###########################################################################################
-
+import time,threading
 import components.stock as stock
 import config
 
 config=config.config
+
+if config['main']['simulate']:
+    from query_sources.simulator import Api as Api
+else:
+    from query_sources.query_source import Api as Api
+
+
 query_source = Api()
 
 with open('stocks.txt') as f:
@@ -39,3 +40,6 @@ refresh_thread=threading.Thread(target=poll_data)
 refresh_thread.start()
 analyze_thread=threading.Thread(target=analyze_data)
 analyze_thread.start()
+
+time.sleep(10)
+print('done')

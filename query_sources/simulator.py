@@ -20,6 +20,9 @@ class Api():
     def get_starting_price(self):
         return random.randint(10,300)
 
+    def get_starting_volume(selfself):
+        return random.randint(40000,120000)
+
     def get_next_value(self,prev_value):
         temp=random.randint(0,1)
         if temp==0:
@@ -33,17 +36,27 @@ class Api():
         upper_threshold=int(prev_value+prev_value*percent_difference)
         return random.randint(lower_threshold,upper_threshold)
 
-    def get_price(self, ticker):
+    def get_price_volume(self, ticker,start_timestamp,end_timestamp):
         if ticker in self.tickers and 'price' in self.tickers[ticker]:
             prev_value=self.tickers[ticker]['price']
             new_value=self.get_next_value(prev_value)
-            return {'timestamp': time.time(),'value':new_value}
+            self.tickers[ticker]['price']=new_value
         else:
             starting_price=self.get_starting_price()
             if ticker not in self.tickers:
                 self.tickers[ticker]={}
             self.tickers[ticker]['price']=starting_price
-            return {'timestamp': time.time(), 'value': starting_price}
+
+        if ticker in self.tickers and 'volume' in self.tickers[ticker]:
+            prev_value = self.tickers[ticker]['volume']
+            new_value = self.get_next_value(prev_value)
+            self.tickers[ticker]['volume']=new_value
+        else:
+            starting_volume = self.get_starting_volume()
+            if ticker not in self.tickers:
+                self.tickers[ticker] = {}
+            self.tickers[ticker]['volume'] = starting_volume
+        return [{'timestamp': time.time(), 'price': self.tickers[ticker]['price'],'volume':self.tickers[ticker]['volume']}]
 
     def get_indicator(self, ticker, indicator, start, end, params=[]):
         ret=[]

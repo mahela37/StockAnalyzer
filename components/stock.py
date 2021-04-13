@@ -11,6 +11,7 @@ class Stock:
         self.ticker = ticker.strip()
         self.query_source = query_source
         self.price=[]
+        self.volume=[]
         self.indicators={}
         self.has_data = False
         for indicator in self.config['indicators']:
@@ -18,11 +19,21 @@ class Stock:
 
     ''' Fetch the latest data from the API'''
     def refresh(self):
-        price_result=self.query_source.get_price(self.ticker)
-        if price_result is not None:
-            self.price.append(price_result)
+
+        # Update price and volume
+        if self.price == []:  # Data not initialized. fetch all data since market open
+            start_timestamp = time_helper.today_opening_timestamp(self.config['marketOpen'])
+        else:  # Updating the data. let's just query the missing data.
+            start_timestamp = self.price[len(self.price) - 1]['timestamp']  # timestamp of last entry
+        end_timestamp = int(time.time())
+        price_volume_result=self.query_source.get_price_volume(self.ticker,start_timestamp,end_timestamp)
+        if price_volume_result is not []:
+            for entry in price_volume_result:
+                self.price.append({'timestamp':entry['timestamp'],'value':entry['price']})
+                self.volume.append({'timestamp': entry['timestamp'], 'value': entry['volume']})
             self.has_data=True
 
+        # Update indicators
         for indicator in self.indicators:
             if self.indicators[indicator] == []:  # Data not initialized. fetch all data since market open
                 start_timestamp = time_helper.today_opening_timestamp(self.config['marketOpen'])
